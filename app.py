@@ -4,7 +4,7 @@ import pandas as pd
 from parser import process_resume  # Your existing resume parsing function
 
 st.set_page_config(page_title="📄 Resume Parser", layout="centered")
-st.title("🚀 GenZ Resume Parser Tool")
+st.title("🚀 Resume Parser Tool")
 
 st.markdown("""
 <style>
