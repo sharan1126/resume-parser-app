@@ -1,15 +1,34 @@
 import streamlit as st
 import os
 import pandas as pd
-from parser import process_resume  # Your existing function
+from parser import process_resume  # Your existing resume parsing function
 
-st.set_page_config(page_title="Resume Parser", layout="centered")
-st.title("📄 Resume Parser Tool")
+st.set_page_config(page_title="📄 Resume Parser", layout="centered")
+st.title("🚀 GenZ Resume Parser Tool")
 
-uploaded_files = st.file_uploader("Upload PDF resumes", type="pdf", accept_multiple_files=True)
+st.markdown("""
+<style>
+    .block-container {
+        padding-top: 2rem;
+    }
+    .stButton>button {
+        background-color: #6c63ff;
+        color: white;
+        border-radius: 12px;
+        padding: 0.5em 1em;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .stButton>button:hover {
+        background-color: #5751d6;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-if uploaded_files is not None and len(uploaded_files) > 0:
-    st.success(f"{len(uploaded_files)} resume(s) uploaded.")
+uploaded_files = st.file_uploader("📎 Upload your PDF resumes", type="pdf", accept_multiple_files=True)
+
+if uploaded_files and len(uploaded_files) > 0:
+    st.success(f"✅ {len(uploaded_files)} resume(s) uploaded!")
 
     results = []
     resume_folder = "Uploaded_Resumes"
@@ -24,11 +43,19 @@ if uploaded_files is not None and len(uploaded_files) > 0:
         results.append(result)
 
     df = pd.DataFrame(results)
-    st.subheader("Extracted Information")
-    st.dataframe(df)
 
-    st.download_button("📥 Download CSV", df.to_csv(index=False), file_name="parsed_resumes.csv")
+    st.markdown("### 📊 Parsed Resume Data")
+
+    if not df.empty:
+        # Sorting options
+        sort_column = st.selectbox("🔽 Sort by", df.columns)
+        sort_order = st.radio("Order", ["Ascending", "Descending"], horizontal=True)
+
+        sorted_df = df.sort_values(by=sort_column, ascending=(sort_order == "Ascending"))
+
+        st.dataframe(sorted_df, use_container_width=True)
+
+        # Download button for sorted CSV
+        st.download_button("📥 Download Sorted CSV", sorted_df.to_csv(index=False), file_name="sorted_parsed_resumes.csv")
 else:
-    st.info("Please upload one or more PDF resumes to begin.")
-# This line was added to force an update
-
+    st.info("👆 Upload one or more PDF resumes to begin!")
